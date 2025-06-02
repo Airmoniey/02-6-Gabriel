@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Horários - Vórtex Deluxe</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #e0e0e0;
+      padding: 1.5rem;
+      text-align: center;
+      color: #222;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .search-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+
+    .search-bar input {
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: 1.5px solid #ccc;
+      width: 200px;
+      font-size: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: center;
+      background-color: #fff;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    td:hover {
+      background-color: #eef4ff;
+    }
+
+    .footer {
+      text-align: center;
+      color: #777;
+      margin-top: 4rem;
+      padding-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Gerador de Horários</h1>
+    <p>Organize professores, aulas e matérias</p>
+  </header>
+
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" placeholder="Buscar professor" id="buscaProfessor">
+      <input type="text" placeholder="Buscar aula" id="buscaAula">
+      <input type="text" placeholder="Buscar matéria" id="buscaMateria">
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Horário</th>
+          <th>Segunda</th>
+          <th>Terça</th>
+          <th>Quarta</th>
+          <th>Quinta</th>
+          <th>Sexta</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaHorarios">
+        <tr><td>07:30 - 08:20</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>08:20 - 09:10</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>09:10 - 10:00</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>10:00 - 10:15</td><td colspan="5">Intervalo</td></tr>
+        <tr><td>10:15 - 11:05</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>11:05 - 11:55</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>11:55 - 12:50</td><td></td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025 Vórtex Deluxe - Todos os direitos reservados</p>
+  </div>
+
+  <script>
+    // Filtros de busca simples
+    const professorInput = document.getElementById('buscaProfessor');
+    const aulaInput = document.getElementById('buscaAula');
+    const materiaInput = document.getElementById('buscaMateria');
+
+    const tabela = document.getElementById('tabelaHorarios');
+
+    function aplicarFiltro() {
+      const prof = professorInput.value.toLowerCase();
+      const aula = aulaInput.value.toLowerCase();
+      const materia = materiaInput.value.toLowerCase();
+
+      for (let row of tabela.rows) {
+        let texto = row.textContent.toLowerCase();
+        row.style.display = (texto.includes(prof) && texto.includes(aula) && texto.includes(materia)) ? '' : 'none';
+      }
+    }
+
+    professorInput.addEventListener('input', aplicarFiltro);
+    aulaInput.addEventListener('input', aplicarFiltro);
+    materiaInput.addEventListener('input', aplicarFiltro);
+  </script>
+</body>
+</html>
