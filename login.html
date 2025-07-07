@@ -116,7 +116,11 @@
         alert("Login como professor bem-sucedido!");
         window.location.href = "gerador.html";
       } else if (usuario === "aluno" && senha === "aluno") {
-        alert("Login como aluno bem-sucedido! (sem redirecionamento)");
+        alert("Login como aluno bem-sucedido!");
+        window.location.href = "exibição.html";
+      } else if (usuario === "pedagogo" && senha === "pedagogo") {
+        alert("Login como pedagogo bem-sucedido!");
+        window.location.href = "gerador.html";
       } else {
         alert("Usuário ou senha incorretos.");
       }
