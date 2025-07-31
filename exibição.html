@@ -33,7 +33,7 @@
       max-width: 1200px;
       margin: 1rem auto;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       gap: var(--gap);
       padding: 0 1rem;
@@ -54,12 +54,10 @@
     .controls button:hover {
       background: #0056b3;
     }
-    #btnGerador {
+    .controls button:disabled {
       background: var(--cor-header);
-      color: var(--cor-texto);
-    }
-    #btnGerador:hover {
-      background: #d5d5d5;
+      color: #777;
+      cursor: not-allowed;
     }
     .container {
       max-width: 1200px;
@@ -100,13 +98,13 @@
 <body>
   <header>
     <h1>Grade curricular</h1>
-    <p>Clique em “Importar CSV” para carregar os horários</p>
+    <p>Clique em "Importar CSV" para carregar os horários</p>
   </header>
 
   <div class="controls">
-    <a href="gerador.html" id="btnGerador">Gerar</a>
     <div style="display: flex; gap: var(--gap); align-items: center;">
       <button id="btnImportar">Importar CSV</button>
+      <button id="btnCSV" disabled>Baixar CSV</button>
       <button id="btnPDF" style="display: none;">Baixar PDF</button>
       <input type="file" id="fileInput" accept=".csv" />
     </div>
@@ -136,6 +134,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     const btnImportar = document.getElementById('btnImportar');
+    const btnCSV = document.getElementById('btnCSV');
     const btnPDF = document.getElementById('btnPDF');
     const fileInput = document.getElementById('fileInput');
     const tabela = document.getElementById('tabelaHorarios');
@@ -186,6 +185,7 @@
           initTable();
           preencherTabela(reader.result);
           btnPDF.style.display = 'inline-block';
+          btnCSV.disabled = false;
         } catch {
           alert('Formato de CSV inválido ou corrompido');
           initTable();
@@ -221,6 +221,29 @@
       blk.textContent = text;
       cell.appendChild(blk);
     }
+
+    btnCSV.addEventListener('click', () => {
+      let csvContent = "Horário,Segunda,Terça,Quarta,Quinta,Sexta\n";
+      
+      Array.from(tbody.rows).forEach(row => {
+        const horario = row.cells[0].textContent;
+        const dias = Array.from(row.cells).slice(1).map(cell => {
+          return Array.from(cell.querySelectorAll('.block')).map(block => block.textContent).join(' / ');
+        });
+        
+        csvContent += `"${horario}",${dias.map(d => `"${d}"`).join(',')}\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'horarios.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
 
     btnPDF.addEventListener('click', () => {
       html2canvas(tabela).then(canvas => {
