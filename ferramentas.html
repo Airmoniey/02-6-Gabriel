@@ -150,10 +150,10 @@
       '07:30 - 08:20',
       '08:20 - 09:10',
       '09:10 - 10:00',
-      '10:00 - 10:15',
-      '10:15 - 11:05',
-      '11:05 - 11:55',
-      '11:55 - 12:50'
+      '10:00 - 10:20',
+      '10:20 - 11:10',
+      '11:10 - 12:00',
+      '12:00 - 12:50'
     ];
 
     function initTable() {
@@ -164,7 +164,7 @@
         td0.textContent = h;
         tr.appendChild(td0);
 
-        if (h === '10:00 - 10:15') {
+        if (h === '10:00 - 10:20') {
           const tdI = document.createElement('td');
           tdI.colSpan = 5;
           tdI.textContent = 'Intervalo';

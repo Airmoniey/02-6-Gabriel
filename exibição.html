@@ -33,7 +33,7 @@
       max-width: 1200px;
       margin: 1rem auto;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       gap: var(--gap);
       padding: 0 1rem;
@@ -54,10 +54,12 @@
     .controls button:hover {
       background: #0056b3;
     }
-    .controls button:disabled {
+    #btnGerador {
       background: var(--cor-header);
-      color: #777;
-      cursor: not-allowed;
+      color: var(--cor-texto);
+    }
+    #btnGerador:hover {
+      background: #d5d5d5;
     }
     .container {
       max-width: 1200px;
@@ -98,13 +100,13 @@
 <body>
   <header>
     <h1>Grade curricular</h1>
-    <p>Clique em "Importar CSV" para carregar os horários</p>
+    <p>Clique em “Importar CSV” para carregar os horários</p>
   </header>
 
   <div class="controls">
+    <a href="gerador.html" id="btnGerador">Gerar</a>
     <div style="display: flex; gap: var(--gap); align-items: center;">
       <button id="btnImportar">Importar CSV</button>
-      <button id="btnCSV" disabled>Baixar CSV</button>
       <button id="btnPDF" style="display: none;">Baixar PDF</button>
       <input type="file" id="fileInput" accept=".csv" />
     </div>
@@ -127,14 +129,13 @@
   </div>
 
   <div class="footer">
-    © 2025 Vórtex Deluxe – Todos os direitos reservados
+    ©2025 Vórtex Deluxe – Todos os direitos reservados
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     const btnImportar = document.getElementById('btnImportar');
-    const btnCSV = document.getElementById('btnCSV');
     const btnPDF = document.getElementById('btnPDF');
     const fileInput = document.getElementById('fileInput');
     const tabela = document.getElementById('tabelaHorarios');
@@ -144,10 +145,10 @@
       '07:30 - 08:20',
       '08:20 - 09:10',
       '09:10 - 10:00',
-      '10:00 - 10:15',
-      '10:15 - 11:05',
-      '11:05 - 11:55',
-      '11:55 - 12:50'
+      '10:00 - 10:20',
+      '10:20 - 11:10',
+      '11:10 - 12:00',
+      '12:00 - 12:50'
     ];
 
     function initTable() {
@@ -158,7 +159,7 @@
         td0.textContent = h;
         tr.appendChild(td0);
 
-        if (h === '10:00 - 10:15') {
+        if (h === '10:00 - 10:20') {
           const tdI = document.createElement('td');
           tdI.colSpan = 5;
           tdI.textContent = 'Intervalo';
@@ -185,7 +186,6 @@
           initTable();
           preencherTabela(reader.result);
           btnPDF.style.display = 'inline-block';
-          btnCSV.disabled = false;
         } catch {
           alert('Formato de CSV inválido ou corrompido');
           initTable();
@@ -221,29 +221,6 @@
       blk.textContent = text;
       cell.appendChild(blk);
     }
-
-    btnCSV.addEventListener('click', () => {
-      let csvContent = "Horário,Segunda,Terça,Quarta,Quinta,Sexta\n";
-      
-      Array.from(tbody.rows).forEach(row => {
-        const horario = row.cells[0].textContent;
-        const dias = Array.from(row.cells).slice(1).map(cell => {
-          return Array.from(cell.querySelectorAll('.block')).map(block => block.textContent).join(' / ');
-        });
-        
-        csvContent += `"${horario}",${dias.map(d => `"${d}"`).join(',')}\n`;
-      });
-      
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', 'horarios.csv');
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
 
     btnPDF.addEventListener('click', () => {
       html2canvas(tabela).then(canvas => {
