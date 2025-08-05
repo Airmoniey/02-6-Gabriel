@@ -42,7 +42,6 @@
       padding: 1rem;
     }
 
-    /* área de busca + botões */
     .search-bar {
       display: flex;
       align-items: center;
@@ -195,13 +194,16 @@
     aulaInput.addEventListener('input', aplicarFiltro);
     materiaInput.addEventListener('input', aplicarFiltro);
 
+    // ✅ Corrigida: preenche todos os horários exceto intervalo
     function gerarHorarios() {
       for (let row of tabela.rows) {
-        if (row.cells.length !== 6) continue;
-        for (let i = 1; i < row.cells.length; i++) {
+        const isIntervalo = row.cells.length === 2 && row.cells[1].colSpan === 5;
+        if (isIntervalo) continue;
+
+        for (let i = 1; i <= 5; i++) {
           const prof = professores[Math.floor(Math.random() * professores.length)];
           const mat  = materias[Math.floor(Math.random() * materias.length)];
-          row.cells[i].textContent = prof + ' - ' + mat;
+          row.cells[i].textContent = `${prof} - ${mat}`;
         }
       }
       professorInput.value = '';
@@ -211,25 +213,28 @@
 
     function downloadCSV() {
       const rows = [];
-      // cabeçalhos
+
       const headers = Array.from(
         document.querySelectorAll('table thead th')
       ).map(th => th.textContent.trim());
       rows.push(headers);
 
-      // dados
       for (let row of tabela.rows) {
-        if (row.cells.length !== 6) continue; // pula intervalo
-        const rowData = Array.from(row.cells).map(td => td.textContent.trim());
-        rows.push(rowData);
+        const isIntervalo = row.cells.length === 2 && row.cells[1].colSpan === 5;
+        if (isIntervalo) {
+          const horario = row.cells[0].textContent.trim();
+          const intervalo = row.cells[1].textContent.trim();
+          rows.push([horario, intervalo, '', '', '', '']);
+        } else {
+          const rowData = Array.from(row.cells).map(td => td.textContent.trim());
+          rows.push(rowData);
+        }
       }
 
-      // monta CSV
       const csvContent = rows
         .map(r => r.map(cell => `"${cell.replace(/"/g,'""')}"`).join(','))
         .join('\n');
 
-      // dispara download
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -247,4 +252,3 @@
   </script>
 </body>
 </html>
-```

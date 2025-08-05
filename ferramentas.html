@@ -13,22 +13,31 @@
       --border-radius: 8px;
       --gap: 1rem;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: Arial, sans-serif;
       background: var(--cor-fundo);
       color: var(--cor-texto);
       min-height: 100vh;
     }
+
     header {
       background: var(--cor-header);
       padding: 1.5rem;
       text-align: center;
     }
+
     header h1 {
       margin-bottom: .5rem;
       font-size: 2rem;
     }
+
     .controls {
       max-width: 1200px;
       margin: 1rem auto;
@@ -38,6 +47,7 @@
       gap: var(--gap);
       padding: 0 1rem;
     }
+
     .controls button,
     .controls a {
       border: none;
@@ -47,31 +57,44 @@
       cursor: pointer;
       text-decoration: none;
     }
+
     .controls button {
       background: var(--cor-primaria);
       color: #fff;
     }
+
     .controls button:hover {
       background: #0056b3;
     }
+
     #btnGerador {
       background: var(--cor-header);
       color: var(--cor-texto);
     }
+
     #btnGerador:hover {
       background: #d5d5d5;
     }
+
+    #btnDownload:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      color: #666;
+    }
+
     .container {
       max-width: 1200px;
       margin: 0 auto 2rem;
       padding: 0 1rem;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       background: #fff;
     }
+
     th, td {
       border: 1px solid #ddd;
       padding: 0.8rem;
@@ -80,10 +103,12 @@
       position: relative;
       height: 60px;
     }
+
     th {
       background: var(--cor-primaria);
       color: #fff;
     }
+
     .block {
       background: var(--cor-header);
       border-radius: var(--border-radius);
@@ -92,22 +117,27 @@
       cursor: move;
       user-select: none;
     }
+
     .block.conflict {
       background: #dc3545;
       color: #fff;
     }
+
     .footer {
       text-align: center;
       color: #777;
       margin-top: 2rem;
     }
-    input[type="file"] { display: none; }
+
+    input[type="file"] {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Verificador de Conflitos de Horários</h1>
-    <p>Clique em “Importar CSV” para carregar o horários gerado</p>
+    <p>Clique em “Importar CSV” para carregar o horário gerado</p>
   </header>
 
   <div class="controls">
@@ -115,6 +145,7 @@
     <div style="display: flex; gap: var(--gap);">
       <button id="btnImportar">Importar CSV</button>
       <button id="btnCheck">Verificar Conflitos</button>
+      <button id="btnDownload" disabled>Baixar Planilha</button>
       <input type="file" id="fileInput" accept=".csv" />
     </div>
   </div>
@@ -140,43 +171,14 @@
   </div>
 
   <script>
-    const btnImportar  = document.getElementById('btnImportar');
-    const btnCheck     = document.getElementById('btnCheck');
-    const fileInput    = document.getElementById('fileInput');
-    const tabela       = document.getElementById('tabelaHorarios');
-    const tbody        = tabela.tBodies[0];
+    const btnImportar = document.getElementById('btnImportar');
+    const btnCheck = document.getElementById('btnCheck');
+    const btnDownload = document.getElementById('btnDownload');
+    const fileInput = document.getElementById('fileInput');
+    const tabela = document.getElementById('tabelaHorarios');
+    const tbody = tabela.tBodies[0];
 
-    const horarios = [
-      '07:30 - 08:20',
-      '08:20 - 09:10',
-      '09:10 - 10:00',
-      '10:00 - 10:20',
-      '10:20 - 11:10',
-      '11:10 - 12:00',
-      '12:00 - 12:50'
-    ];
-
-    function initTable() {
-      tbody.innerHTML = '';
-      horarios.forEach(h => {
-        const tr = document.createElement('tr');
-        const td0 = document.createElement('td');
-        td0.textContent = h;
-        tr.appendChild(td0);
-
-        if (h === '10:00 - 10:20') {
-          const tdI = document.createElement('td');
-          tdI.colSpan = 5;
-          tdI.textContent = 'Intervalo';
-          tr.appendChild(tdI);
-        } else {
-          for (let i = 0; i < 5; i++) {
-            tr.appendChild(document.createElement('td'));
-          }
-        }
-        tbody.appendChild(tr);
-      });
-    }
+    let ultimoCSV = '';
 
     btnImportar.addEventListener('click', () => fileInput.click());
 
@@ -184,51 +186,76 @@
       const file = e.target.files[0];
       if (!file) return alert('Nenhum arquivo selecionado');
       const reader = new FileReader();
-
       reader.onerror = () => alert('Erro ao ler o arquivo CSV');
-      reader.onload  = () => {
+      reader.onload = () => {
         try {
-          initTable();
-          preencherTabela(reader.result);
+          ultimoCSV = reader.result;
+          preencherTabela(ultimoCSV);
           makeDraggable();
           checkConflicts();
+          btnDownload.disabled = false;
         } catch {
           alert('Formato de CSV inválido ou corrompido');
-          initTable();
+          tbody.innerHTML = '';
+          btnDownload.disabled = true;
         }
       };
       reader.readAsText(file, 'UTF-8');
     });
 
+    btnDownload.addEventListener('click', () => {
+      if (!ultimoCSV) return;
+      const blob = new Blob([ultimoCSV], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'horarios.csv';
+      link.click();
+    });
+
     function preencherTabela(csv) {
+      tbody.innerHTML = '';
       const linhas = csv.trim().split('\n');
       if (linhas.length < 2) throw new Error('CSV sem dados');
 
-      linhas.slice(1).forEach(line => {
-        const cols = line.split(',').map(c => c.replace(/^"|"$/g, ''));
-        if (cols.length !== 6) throw new Error('Número de colunas inválido');
-        const horario   = cols[0];
+      const cabecalho = linhas[0].split(',').map(c => c.replace(/^"|"$/g, ''));
+      const dias = cabecalho.slice(1); // ignora "Horário"
+
+      linhas.slice(1).forEach(linha => {
+        const cols = linha.split(',').map(c => c.replace(/^"|"$/g, '').trim());
+        const horario = cols[0];
         const conteudos = cols.slice(1);
 
-        Array.from(tbody.rows).forEach(tr => {
-          if (tr.cells[0].textContent === horario) {
-            conteudos.forEach((txt, i) => {
-              if (tr.cells[1 + i]) createBlock(txt, tr.cells[1 + i]);
-            });
+        const tr = document.createElement('tr');
+        const td0 = document.createElement('td');
+        td0.textContent = horario;
+        tr.appendChild(td0);
+
+        if (horario.toLowerCase().includes('intervalo')) {
+          const td = document.createElement('td');
+          td.colSpan = 5;
+          td.textContent = 'Intervalo';
+          tr.appendChild(td);
+        } else {
+          for (let i = 0; i < 5; i++) {
+            const td = document.createElement('td');
+            createBlock(conteudos[i], td);
+            tr.appendChild(td);
           }
-        });
+        }
+        tbody.appendChild(tr);
       });
     }
 
     function createBlock(text, cell) {
+      if (!text || !text.trim()) return;
       const blk = document.createElement('div');
-      blk.className   = 'block';
-      blk.draggable   = true;
+      blk.className = 'block';
+      blk.draggable = true;
       blk.textContent = text;
-      blk.id          = 'b' + Math.random().toString(36).slice(2);
-      blk.addEventListener('dragstart', e =>
-        e.dataTransfer.setData('text/plain', blk.id)
-      );
+      blk.id = 'b' + Math.random().toString(36).slice(2);
+      blk.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', blk.id);
+      });
       cell.appendChild(blk);
     }
 
@@ -237,7 +264,7 @@
         td.addEventListener('dragover', e => e.preventDefault());
         td.addEventListener('drop', e => {
           e.preventDefault();
-          const id  = e.dataTransfer.getData('text/plain');
+          const id = e.dataTransfer.getData('text/plain');
           const blk = document.getElementById(id);
           if (blk) e.currentTarget.appendChild(blk);
           checkConflicts();
@@ -247,14 +274,15 @@
 
     function checkConflicts() {
       tbody.querySelectorAll('td').forEach(td => {
-        const blks = td.querySelectorAll('.block');
-        blks.forEach(b => b.classList.toggle('conflict', blks.length > 1));
+        const blocks = td.querySelectorAll('.block');
+        blocks.forEach(b => b.classList.toggle('conflict', blocks.length > 1));
       });
     }
 
     function hasConflicts() {
-      return Array.from(tbody.querySelectorAll('td'))
-        .some(td => td.querySelectorAll('.block').length > 1);
+      return Array.from(tbody.querySelectorAll('td')).some(
+        td => td.querySelectorAll('.block').length > 1
+      );
     }
 
     btnCheck.addEventListener('click', () => {
@@ -263,8 +291,6 @@
         ? 'Há conflito nos horários!'
         : 'Não há conflito nos horários!');
     });
-
-    initTable();
   </script>
 </body>
 </html>
