@@ -147,10 +147,9 @@
         <tr><td>07:30 - 08:20</td><td></td><td></td><td></td><td></td><td></td></tr>
         <tr><td>08:20 - 09:10</td><td></td><td></td><td></td><td></td><td></td></tr>
         <tr><td>09:10 - 10:00</td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr><td>10:00 - 10:15</td><td colspan="5">Intervalo</td></tr>
-        <tr><td>10:15 - 11:05</td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr><td>11:05 - 11:55</td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr><td>11:55 - 12:50</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>10:20 - 11:10</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>11:10 - 12:00</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>12:00 - 12:50</td><td></td><td></td><td></td><td></td><td></td></tr>
       </tbody>
     </table>
   </div>
@@ -194,12 +193,10 @@
     aulaInput.addEventListener('input', aplicarFiltro);
     materiaInput.addEventListener('input', aplicarFiltro);
 
-    // ✅ Corrigida: preenche todos os horários exceto intervalo
+    // ✅ Corrigida: preenche todos os horários exceto o intervalo
     function gerarHorarios() {
       for (let row of tabela.rows) {
-        const isIntervalo = row.cells.length === 2 && row.cells[1].colSpan === 5;
-        if (isIntervalo) continue;
-
+        // Remove lógica de intervalo, agora preenche todas as células de aula
         for (let i = 1; i <= 5; i++) {
           const prof = professores[Math.floor(Math.random() * professores.length)];
           const mat  = materias[Math.floor(Math.random() * materias.length)];
@@ -220,15 +217,8 @@
       rows.push(headers);
 
       for (let row of tabela.rows) {
-        const isIntervalo = row.cells.length === 2 && row.cells[1].colSpan === 5;
-        if (isIntervalo) {
-          const horario = row.cells[0].textContent.trim();
-          const intervalo = row.cells[1].textContent.trim();
-          rows.push([horario, intervalo, '', '', '', '']);
-        } else {
-          const rowData = Array.from(row.cells).map(td => td.textContent.trim());
-          rows.push(rowData);
-        }
+        const rowData = Array.from(row.cells).map(td => td.textContent.trim());
+        rows.push(rowData);
       }
 
       const csvContent = rows

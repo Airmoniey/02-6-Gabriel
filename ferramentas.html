@@ -89,6 +89,14 @@
       background: #dc3545;
       color: #fff;
     }
+    .block-intervalo {
+      background: #f0f0f0;
+      color: #aaa;
+      border: 1px dashed #aaa;
+      cursor: default;
+      user-select: none;
+      text-align: center;
+    }
     .footer {
       text-align: center;
       color: #777;
@@ -181,6 +189,7 @@
           const tdI = document.createElement('td');
           tdI.colSpan = 5;
           tdI.textContent = 'Intervalo';
+          tdI.className = 'block-intervalo';  // Classe especial para o intervalo
           tr.appendChild(tdI);
         } else {
           for (let i = 0; i < 5; i++) {
@@ -212,6 +221,9 @@
     }
 
     function createBlock(text, cell) {
+      // Verifica se é o intervalo, caso seja, não permite arrastar
+      if (cell.classList.contains('block-intervalo')) return;
+
       const blk = document.createElement('div');
       blk.className   = 'block';
       blk.draggable   = true;
