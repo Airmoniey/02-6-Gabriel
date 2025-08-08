@@ -8,30 +8,32 @@ body {
 }
 
 .cabecalho {
-  background-color: #1e1e2f;
-  color: white;
+  background-color: #e0e0e0; /* cinza claro */
+  color: #333;
   padding: 2rem 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
 .icone {
-  width: 40px;
+  width: 70px;
   height: auto;
 }
 
 .titulos h1 {
   font-size: 2.5rem;
   margin: 0;
+  color: #222;
 }
 
 .titulos h2 {
   font-size: 1.2rem;
   font-weight: 300;
   margin: 0;
+  color: #555;
 }
 
 .descricao {
@@ -68,37 +70,9 @@ body {
   font-size: 1.2rem;
   border-radius: 8px;
   transition: background-color 0.3s ease;
+  cursor: pointer;
 }
 
 .botao-comecar:hover {
   background-color: #0056b3;
-}
-
-.cabecalho {
-  background-color: #e0e0e0; /* cinza claro no lugar do roxo */
-  color: #333; /* texto mais escuro para contraste no fundo claro */
-  padding: 2rem 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem; /* um pouco mais de espaçamento */
-  flex-wrap: wrap;
-}
-
-.icone {
-  width: 70px; /* aumentei de 40px para 70px */
-  height: auto;
-}
-  
-.titulos h1 {
-  font-size: 2.5rem;
-  margin: 0;
-  color: #222; /* cor escura para o título */
-}
-
-.titulos h2 {
-  font-size: 1.2rem;
-  font-weight: 300;
-  margin: 0;
-  color: #555; /* cinza médio para o subtítulo */
 }
