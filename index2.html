@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCG - Ferramenta de Consultas Gerais</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f6f8;
+        }
+        header {
+            background-color: #004aad;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #004aad;
+        }
+        .form-section {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, textarea, select, button {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #004aad;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00337a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ferramenta de Consultas Gerais</h1>
+        <p>Módulo de Planejamento - Planos de Aula Online</p>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Cadastrar Plano de Aula</h2>
+            <form id="planoForm">
+                <label for="tema">Tema</label>
+                <input type="text" id="tema" name="tema" required>
+
+                <label for="conteudo">Conteúdo</label>
+                <textarea id="conteudo" name="conteudo" required></textarea>
+
+                <label for="objetivos">Objetivos</label>
+                <textarea id="objetivos" name="objetivos" required></textarea>
+
+                <label for="trimestre">Trimestre</label>
+                <select id="trimestre" name="trimestre" required>
+                    <option value="">Selecione</option>
+                    <option value="1º Trimestre">1º Trimestre</option>
+                    <option value="2º Trimestre">2º Trimestre</option>
+                    <option value="3º Trimestre">3º Trimestre</option>
+                </select>
+
+                <button type="submit">Salvar Plano</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Importações Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Configuração Firebase (substituir pelos seus dados)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_ID",
+            appId: "SUA_APP_ID"
+        };
+
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Referência ao formulário
+        const planoForm = document.getElementById("planoForm");
+
+        // Salvar plano no Firestore
+        planoForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const tema = planoForm.tema.value;
+            const conteudo = planoForm.conteudo.value;
+            const objetivos = planoForm.objetivos.value;
+            const trimestre = planoForm.trimestre.value;
+
+            try {
+                await addDoc(collection(db, "planosAula"), {
+                    tema,
+                    conteudo,
+                    objetivos,
+                    trimestre,
+                    dataCadastro: new Date()
+                });
+                planoForm.reset();
+                alert("Plano salvo com sucesso!");
+            } catch (error) {
+                console.error("Erro ao salvar plano:", error);
+            }
+        });
+    </script>
+</body>
+</html>
