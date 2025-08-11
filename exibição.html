@@ -33,7 +33,7 @@
       max-width: 1200px;
       margin: 1rem auto;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       gap: var(--gap);
       padding: 0 1rem;
@@ -53,13 +53,6 @@
     }
     .controls button:hover {
       background: #0056b3;
-    }
-    #btnGerador {
-      background: var(--cor-header);
-      color: var(--cor-texto);
-    }
-    #btnGerador:hover {
-      background: #d5d5d5;
     }
     .container {
       max-width: 1200px;
@@ -100,11 +93,10 @@
 <body>
   <header>
     <h1>Grade curricular</h1>
-    <p>Clique em “Importar CSV” para carregar os horários</p>
+    <p>Clique em "Importar CSV" para carregar os horários</p>
   </header>
 
   <div class="controls">
-    <a href="gerador.html" id="btnGerador">Gerar</a>
     <div style="display: flex; gap: var(--gap); align-items: center;">
       <button id="btnImportar">Importar CSV</button>
       <button id="btnPDF" style="display: none;">Baixar PDF</button>
@@ -159,15 +151,9 @@
         td0.textContent = h;
         tr.appendChild(td0);
 
-        if (h === '10:00 - 10:20') {
-          const tdI = document.createElement('td');
-          tdI.colSpan = 5;
-          tdI.textContent = 'Intervalo';
-          tr.appendChild(tdI);
-        } else {
-          for (let i = 0; i < 5; i++) {
-            tr.appendChild(document.createElement('td'));
-          }
+        // Removida a adição automática do intervalo
+        for (let i = 0; i < 5; i++) {
+          tr.appendChild(document.createElement('td'));
         }
         tbody.appendChild(tr);
       });
