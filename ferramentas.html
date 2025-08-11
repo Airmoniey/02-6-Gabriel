@@ -1,94 +1,1902 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Verificador de Conflitos - com Eventos, Avisos e Professores Inativos</title>
-  <link rel="stylesheet" href="css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão Escolar Integrado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Modern Color Palette */
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --card-bg: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            --regular: #2a9d8f;
+            --technical: #9b5de5;
+            --conflict: #ff6b6b;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            z-index: 1;
+        }
+        
+        select, button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        select:hover, button:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        select:focus, button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+        }
+        
+        button i {
+            margin-right: 8px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        
+        .schedule-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .schedule-section:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .section-title h2 {
+            color: var(--primary);
+            font-size: 1.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title h2 i {
+            color: var(--primary-light);
+            background: rgba(67, 97, 238, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Schedule Table */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--light-gray);
+        }
+        
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        td {
+            background: white;
+            min-height: 90px;
+            vertical-align: top;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+        
+        .time-col {
+            background: var(--primary-light);
+            color: white;
+            font-weight: 600;
+            width: 120px;
+        }
+        
+        /* Subject Cards */
+        .subject {
+            padding: 12px;
+            margin: 6px 0;
+            border-radius: 10px;
+            cursor: move;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: none;
+        }
+        
+        .subject:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+        }
+        
+        .regular {
+            background: linear-gradient(135deg, var(--regular) 0%, #2a9d8faa 100%);
+            color: white;
+        }
+        
+        .technical {
+            background: linear-gradient(135deg, var(--technical) 0%, #9b5de5aa 100%);
+            color: white;
+        }
+        
+        .subject-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1.05rem;
+        }
+        
+        .teacher, .room {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            display: block;
+            margin: 2px 0;
+        }
+        
+        .conflict {
+            background: linear-gradient(135deg, var(--conflict) 0%, #ff6b6baa 100%) !important;
+            animation: conflictPulse 1.5s infinite;
+        }
+        
+        .absent-subject {
+            background: linear-gradient(135deg, var(--warning) 0%, #f72585aa 100%);
+            animation: pulse 2s infinite;
+        }
+        
+        .absent-ribbon {
+            position: absolute;
+            top: 8px;
+            right: -28px;
+            background: var(--danger);
+            color: white;
+            padding: 3px 30px;
+            transform: rotate(45deg);
+            font-size: 0.7rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .empty-slot {
+            color: var(--gray);
+            font-style: italic;
+            padding: 25px 0;
+            opacity: 0.7;
+        }
+        
+        /* Tools Container */
+        .tools-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* Notifications Panel */
+        .notifications {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-light) var(--light-gray);
+        }
+        
+        .notifications::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .notifications::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 4px;
+        }
+        
+        .notifications::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+        
+        .notification {
+            padding: 18px;
+            margin-bottom: 18px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .notification:hover {
+            transform: translateX(3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .notification.absent {
+            border-left-color: var(--warning);
+        }
+        
+        .notification.conflict {
+            border-left-color: var(--conflict);
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.05rem;
+        }
+        
+        .notification-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+            background: var(--light-gray);
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+        
+        .notification-content {
+            font-size: 0.95rem;
+            color: var(--dark);
+        }
+        
+        .badge {
+            background: var(--warning);
+            color: white;
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        /* Forms */
+        .event-form, .absence-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group.full {
+            grid-column: span 2;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-save {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-save:hover {
+            background: #3aa8cc;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c53030;
+        }
+        
+        /* Attendance Modal */
+        .attendance-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .attendance-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+        
+        .attendance-modal.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-modal:hover {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+        
+        .class-info {
+            background: rgba(67, 97, 238, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .class-info p {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .class-info strong {
+            min-width: 100px;
+            display: inline-block;
+        }
+        
+        .attendance-list {
+            max-height: 350px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-light) var(--light-gray);
+            padding-right: 10px;
+        }
+        
+        .attendance-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .attendance-list::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 4px;
+        }
+        
+        .attendance-list::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+        
+        .student {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--light-gray);
+            transition: background 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .student:hover {
+            background: rgba(67, 97, 238, 0.03);
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .status {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .present {
+            background: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+        
+        .absent {
+            background: rgba(230, 57, 70, 0.2);
+            color: var(--danger);
+        }
+        
+        .late {
+            background: rgba(247, 37, 133, 0.2);
+            color: var(--warning);
+        }
+        
+        .attendance-options {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .attendance-option {
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .attendance-option.present {
+            background: var(--success);
+            color: white;
+        }
+        
+        .attendance-option.present:hover {
+            background: #3aa8cc;
+        }
+        
+        .attendance-option.absent {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .attendance-option.absent:hover {
+            background: #c53030;
+        }
+        
+        .attendance-option.late {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .attendance-option.late:hover {
+            background: #e11d74;
+        }
+        
+        /* Conflict Analysis */
+        .conflict-analysis {
+            background: #fff8f8;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid var(--warning);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .conflict-analysis h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--warning);
+            margin-bottom: 15px;
+        }
+        
+        .conflict-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ffd6e0;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        }
+        
+        .conflict-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .conflict-header span:first-child {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: var(--gray);
+            font-size: 0.95rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+        
+        .footer p {
+            margin: 8px 0;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        @keyframes conflictPulse {
+            0% { background-color: var(--conflict); }
+            50% { background-color: #ff9f9f; }
+            100% { background-color: var(--conflict); }
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: white;
+            border-radius: 12px;
+            padding: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .tab:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Teacher List */
+        .teacher-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .teacher-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: move;
+            transition: all 0.3s ease;
+            border: 1px solid var(--light-gray);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            width: calc(33.333% - 10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .teacher-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            border-color: var(--primary-light);
+        }
+        
+        .teacher-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .teacher-subjects {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        /* Call Button */
+        .call-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            margin-top: 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .call-btn:hover {
+            background: #3aa8cc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .tools-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .teacher-card {
+                width: calc(50% - 10px);
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .tools-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .event-form, .absence-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full {
+                grid-column: span 1;
+            }
+            
+            .teacher-card {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Verificador de Conflitos de Horários</h1>
-    <p>Importe um CSV, selecione turma e turno, adicione eventos, avisos e marque professores inativos.</p>
-
-    <form id="horarioForm">
-      <label for="turma">Turma:</label>
-      <select id="turma" name="turma" required>
-        <option value="">Selecione a Turma</option>
-        <option value="A">Turma A</option>
-        <option value="B">Turma B</option>
-        <option value="C">Turma C</option>
-      </select>
-
-      <label for="turno">Turno:</label>
-      <select id="turno" name="turno" required>
-        <option value="">Selecione o Turno</option>
-        <option value="manha">Manhã</option>
-        <option value="tarde">Tarde</option>
-      </select>
-
-      <button type="submit">Buscar Horários</button>
-    </form>
-  </header>
-
-  <div id="avisos"></div>
-
-  <div class="controls">
-    <a href="gerador.html" id="btnGerador">Gerar</a>
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-      <button id="btnImportar">Importar CSV</button>
-      <button id="btnCheck">Verificar Conflitos</button>
-      <button id="btnAddEvento">Adicionar Evento</button>
-      <button id="btnInativo">Marcar Professor Inativo</button>
-      <input type="file" id="fileInput" accept=".csv" style="display:none;" />
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>Sistema de Gestão Escolar Integrado</h1>
+            </div>
+            <div class="controls">
+                <select id="class-select">
+                    <option value="1ds">1DS - Desenvolvimento de Sistemas</option>
+                    <option value="2ds" selected>2DS - Desenvolvimento de Sistemas</option>
+                    <option value="3ds">3DS - Desenvolvimento de Sistemas</option>
+                    <option value="1em">1EM - Ensino Médio Regular</option>
+                    <option value="2em">2EM - Ensino Médio Regular</option>
+                    <option value="3em">3EM - Ensino Médio Regular</option>
+                </select>
+                <select id="shift-select">
+                    <option value="morning">Manhã (7:30-12:40)</option>
+                    <option value="afternoon" selected>Tarde (13:00-18:15)</option>
+                    <option value="night">Noite</option>
+                </select>
+                <button id="import-btn"><i class="fas fa-file-import"></i> Importar CSV</button>
+                <button id="check-btn"><i class="fas fa-exclamation-triangle"></i> Verificar Conflitos</button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="schedule-section">
+                <div class="section-title">
+                    <h2><i class="far fa-calendar-alt"></i> Grade Horária - Turma 2DS</h2>
+                    <div>
+                        <button id="add-event-btn" class="btn btn-primary"><i class="fas fa-plus"></i> Adicionar Evento</button>
+                        <button id="inactive-btn" class="btn btn-danger"><i class="fas fa-user-slash"></i> Marcar Inativo</button>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="schedule">Grade Horária</div>
+                    <div class="tab" data-tab="teachers">Professores</div>
+                    <div class="tab" data-tab="calendar">Calendário</div>
+                </div>
+                
+                <div class="tab-content active" id="schedule-tab">
+                    <table id="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Horário</th>
+                                <th>Segunda</th>
+                                <th>Terça</th>
+                                <th>Quarta</th>
+                                <th>Quinta</th>
+                                <th>Sexta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="time-col">07:30 - 08:15</td>
+                                <td id="mon-1"></td>
+                                <td id="tue-1"></td>
+                                <td id="wed-1"></td>
+                                <td id="thu-1"></td>
+                                <td id="fri-1"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">08:15 - 09:00</td>
+                                <td id="mon-2"></td>
+                                <td id="tue-2"></td>
+                                <td id="wed-2"></td>
+                                <td id="thu-2"></td>
+                                <td id="fri-2"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">09:00 - 09:45</td>
+                                <td id="mon-3"></td>
+                                <td id="tue-3"></td>
+                                <td id="wed-3"></td>
+                                <td id="thu-3"></td>
+                                <td id="fri-3"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">09:45 - 10:30</td>
+                                <td id="mon-4"></td>
+                                <td id="tue-4"></td>
+                                <td id="wed-4"></td>
+                                <td id="thu-4"></td>
+                                <td id="fri-4"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">10:45 - 11:30</td>
+                                <td id="mon-5"></td>
+                                <td id="tue-5"></td>
+                                <td id="wed-5"></td>
+                                <td id="thu-5"></td>
+                                <td id="fri-5"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">11:30 - 12:15</td>
+                                <td id="mon-6"></td>
+                                <td id="tue-6"></td>
+                                <td id="wed-6"></td>
+                                <td id="thu-6"></td>
+                                <td id="fri-6"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">12:15 - 12:40</td>
+                                <td id="mon-7"></td>
+                                <td id="tue-7"></td>
+                                <td id="wed-7"></td>
+                                <td id="thu-7"></td>
+                                <td id="fri-7"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Conflict Analysis Section -->
+                    <div class="conflict-analysis" id="conflict-analysis" style="display: none;">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Análise de Conflitos</h3>
+                        <div id="conflicts-list"></div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="teachers-tab">
+                    <h3>Professores Disponíveis</h3>
+                    <div class="teacher-list" id="teacher-list">
+                        <!-- Teachers will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="calendar-tab">
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <i class="fas fa-calendar-alt" style="font-size: 4rem; color: var(--primary-light); margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">Visualização de Calendário</h3>
+                        <p style="color: var(--gray); max-width: 600px; margin: 0 auto;">
+                            Esta funcionalidade permite visualizar todos os eventos escolares em uma visão de calendário mensal ou semanal.
+                            Você pode alternar entre visualizações e ver reuniões, feriados e provas agendadas.
+                        </p>
+                        <button class="btn btn-primary" style="margin-top: 25px;">
+                            <i class="fas fa-sync-alt"></i> Ativar Visualização de Calendário
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tools moved below the table -->
+            <div class="tools-container">
+                <div class="card">
+                    <div class="section-title">
+                        <h2><i class="fas fa-bell"></i> Notificações</h2>
+                        <span class="badge">3</span>
+                    </div>
+                    
+                    <div class="notifications">
+                        <div class="notification absent">
+                            <div class="notification-header">
+                                <div class="notification-title">Justificativa de ausência - Prof. Silva</div>
+                                <div class="notification-time">2h atrás</div>
+                            </div>
+                            <div class="notification-content">
+                                Estarei ausente hoje devido a um compromisso médico. Anexo o atestado médico.
+                            </div>
+                        </div>
+                        
+                        <div class="notification conflict">
+                            <div class="notification-header">
+                                <div class="notification-title">Conflito detectado na turma 2DS</div>
+                                <div class="notification-time">Ontem</div>
+                            </div>
+                            <div class="notification-content">
+                                Conflito de horário detectado: Prof. Oliveira e Prof. Santos estão alocados na mesma sala às Terças 10:15.
+                            </div>
+                        </div>
+                        
+                        <div class="notification">
+                            <div class="notification-header">
+                                <div class="notification-title">Reunião pedagógica agendada</div>
+                                <div class="notification-time">5h atrás</div>
+                            </div>
+                            <div class="notification-content">
+                                Reunião pedagógica marcada para sexta-feira, 14/08, às 14:00 na sala dos professores.
+                            </div>
+                        </div>
+                        
+                        <div class="notification">
+                            <div class="notification-header">
+                                <div class="notification-title">Novo evento: Semana de Tecnologia</div>
+                                <div class="notification-time">Ontem</div>
+                            </div>
+                            <div class="notification-content">
+                                Participe da Semana de Tecnologia de 20 a 24 de agosto com palestras e workshops.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="section-title">
+                        <h2><i class="fas fa-plus-circle"></i> Adicionar Evento</h2>
+                    </div>
+                    
+                    <form class="event-form">
+                        <div class="form-group">
+                            <label for="event-type"><i class="fas fa-tag"></i> Tipo de Evento</label>
+                            <select id="event-type">
+                                <option value="substitute">Aula Substituta</option>
+                                <option value="meeting">Reunião Pedagógica</option>
+                                <option value="holiday">Feriado</option>
+                                <option value="exam">Prova Oficial</option>
+                                <option value="institutional">Evento Institucional</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="event-date"><i class="fas fa-calendar-day"></i> Data</label>
+                            <input type="date" id="event-date">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="start-time"><i class="fas fa-clock"></i> Hora Início</label>
+                            <input type="time" id="start-time">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="end-time"><i class="fas fa-clock"></i> Hora Fim</label>
+                            <input type="time" id="end-time">
+                        </div>
+                        
+                        <div class="form-group full">
+                            <label for="event-desc"><i class="fas fa-align-left"></i> Descrição</label>
+                            <textarea id="event-desc" placeholder="Descreva o evento..."></textarea>
+                        </div>
+                        
+                        <button type="button" class="btn btn-save full">
+                            <i class="fas fa-save"></i> Salvar Evento
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <div class="section-title">
+                        <h2><i class="fas fa-user-md"></i> Justificar Ausência</h2>
+                    </div>
+                    
+                    <form class="absence-form">
+                        <div class="form-group">
+                            <label for="teacher-select"><i class="fas fa-chalkboard-teacher"></i> Professor</label>
+                            <select id="teacher-select">
+                                <option value="silva">Prof. Silva</option>
+                                <option value="oliveira">Prof. Oliveira</option>
+                                <option value="santos">Prof. Santos</option>
+                                <option value="souza">Prof. Souza</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="absence-date"><i class="fas fa-calendar-times"></i> Data da Ausência</label>
+                            <input type="date" id="absence-date">
+                        </div>
+                        
+                        <div class="form-group full">
+                            <label for="absence-desc"><i class="fas fa-file-alt"></i> Descrição</label>
+                            <textarea id="absence-desc" placeholder="Detalhe o motivo da ausência..."></textarea>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary full">
+                            <i class="fas fa-paper-plane"></i> Enviar Justificativa
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Sistema de Gestão Escolar Integrado © 2025 | ETEC - Centro Paula Souza</p>
+            <p>Desenvolvido para gerenciamento de cursos técnicos e ensino médio regular</p>
+        </div>
     </div>
-  </div>
 
-  <form id="formEvento" style="display:none;">
-    <input type="text" id="eventoDescricao" placeholder="Descrição do evento" required />
-    <select id="eventoTipo" required>
-      <option value="">Tipo do Evento</option>
-      <option value="feriado">Feriado</option>
-      <option value="prova">Prova</option>
-      <option value="reuniao">Reunião</option>
-      <option value="reserva">Reserva</option>
-      <option value="outro">Outro</option>
-    </select>
-    <select id="eventoDia" required>
-      <option value="">Dia da Semana</option>
-      <option value="1">Segunda</option>
-      <option value="2">Terça</option>
-      <option value="3">Quarta</option>
-      <option value="4">Quinta</option>
-      <option value="5">Sexta</option>
-    </select>
-    <select id="eventoHorario" required>
-      <option value="">Horário</option>
-    </select>
-    <button type="submit">Adicionar</button>
-    <button type="button" id="btnCancelarEvento">Cancelar</button>
-  </form>
+    <!-- Attendance Modal -->
+    <div class="attendance-modal" id="attendance-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-clipboard-list"></i> <span id="modal-title">Registro de Frequência</span></h2>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <div class="class-info" id="class-info"></div>
+            <div class="attendance-list" id="modal-attendance-list">
+                <!-- Attendance will be loaded here -->
+            </div>
+            <button class="btn btn-primary" id="save-attendance" style="margin-top: 20px;">
+                <i class="fas fa-save"></i> Salvar Frequência
+            </button>
+        </div>
+    </div>
 
-  <div class="container">
-    <table id="tabelaHorarios">
-      <thead>
-        <tr>
-          <th>Horário</th>
-          <th>Segunda</th>
-          <th>Terça</th>
-          <th>Quarta</th>
-          <th>Quinta</th>
-          <th>Sexta</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+    <script>
+        // Updated JavaScript with enhanced functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sample data for schedule
+            const scheduleData = [
+                {
+                    day: 'mon',
+                    periods: [
+                        { id: 'mon-1', subject: 'Matemática', teacher: 'Prof. Silva', type: 'regular', room: 'Sala 101' },
+                        { id: 'mon-2', subject: 'Português', teacher: 'Prof. Oliveira', type: 'regular', room: 'Sala 102', absent: true },
+                        { id: 'mon-3', subject: 'Programação Web', teacher: 'Prof. Rodrigues', type: 'technical', room: 'Lab 201' },
+                        { id: 'mon-4', subject: 'Inglês Técnico', teacher: 'Prof. Almeida', type: 'technical', room: 'Sala 103' },
+                        { id: 'mon-5', subject: 'Banco de Dados', teacher: 'Prof. Castro', type: 'technical', room: 'Lab 202' },
+                        { id: 'mon-6', subject: 'Empreendedorismo', teacher: 'Prof. Lima', type: 'technical', room: 'Sala 104' },
+                        { id: 'mon-7', subject: 'Ética Profissional', teacher: 'Prof. Castro', type: 'technical', room: 'Sala 105' }
+                    ]
+                },
+                {
+                    day: 'tue',
+                    periods: [
+                        { id: 'tue-1', subject: 'Física', teacher: 'Prof. Costa', type: 'regular', room: 'Sala 101' },
+                        { id: 'tue-2', subject: 'História', teacher: 'Prof. Santos', type: 'regular', room: 'Sala 102' },
+                        { id: 'tue-3', subject: 'Programação Web', teacher: 'Prof. Rodrigues', type: 'technical', room: 'Lab 201' },
+                        { id: 'tue-4', subject: 'Redes de Computadores', teacher: 'Prof. Nunes', type: 'technical', room: 'Lab 202' },
+                        { id: 'tue-5', subject: 'Design de Interface', teacher: 'Prof. Lima', type: 'technical', room: 'Sala 103' },
+                        { id: 'tue-6', subject: 'Banco de Dados', teacher: 'Prof. Castro', type: 'technical', room: 'Lab 201' },
+                        { id: 'tue-7', subject: 'Projeto Integrador', teacher: 'Prof. Rodrigues', type: 'technical', room: 'Lab 202' }
+                    ]
+                },
+                {
+                    day: 'wed',
+                    periods: [
+                        { id: 'wed-1', subject: 'Química', teacher: 'Prof. Lima', type: 'regular', room: 'Sala 101' },
+                        { id: 'wed-2', subject: 'Geografia', teacher: 'Prof. Souza', type: 'regular', room: 'Sala 102' },
+                        { id: 'wed-3', subject: 'Análise de Sistemas', teacher: 'Prof. Castro', type: 'technical', room: 'Lab 201' },
+                        { id: 'wed-4', subject: 'Sistemas Operacionais', teacher: 'Prof. Nunes', type: 'technical', room: 'Lab 202' },
+                        { id: 'wed-5', subject: 'Banco de Dados', teacher: 'Prof. Castro', type: 'technical', room: 'Lab 201' },
+                        { id: 'wed-6', subject: 'Projeto Integrador', teacher: 'Prof. Rodrigues', type: 'technical', room: 'Lab 202' },
+                        { id: 'wed-7', subject: 'Oficina Técnica', teacher: 'Prof. Castro', type: 'technical', room: 'Lab 201' }
+                    ]
+                },
+                {
+                    day: 'thu',
+                    periods: [
+                        { id: 'thu-1', subject: 'Biologia', teacher: 'Prof. Dias', type: 'regular', room: 'Sala 101' },
+                        { id: 'thu-2', subject: 'Sociologia', teacher: 'Prof. Ramos', type: 'regular', room: 'Sala 102' },
+                        { id: 'thu-3', subject: 'Desenvolvimento Mobile', teacher: 'Prof. Rodrigues', type: 'technical', room: 'Lab 201' },
+                        { id: 'thu-4', subject: 'Testes de Software', teacher: 'Prof. Lima', type: 'technical', room: 'Lab 202' },
+                        { id: 'thu-5', subject: 'Cloud Computing', teacher: 'Prof. Castro', type: 'technical', room: 'Lab 201' },
+                        { id: 'thu-6', subject: 'Segurança Digital', teacher: 'Prof. Nunes', type: 'technical', room: 'Lab 202' },
+                        { id: 'thu-7', subject: 'Marketing Digital', teacher: 'Prof. Oliveira', type: 'technical', room: 'Sala 103' }
+                    ]
+                },
+                {
+                    day: 'fri',
+                    periods: [
+                        { id: 'fri-1', subject: 'Filosofia', teacher: 'Prof. Souza', type: 'regular', room: 'Sala 101' },
+                        { id: 'fri-2', subject: 'Educação Física', teacher: 'Prof. Mendes', type: 'regular', room: 'Quadra' },
+                        { id: 'fri-3', subject: 'Projeto Final', teacher: 'Prof. Castro', type: 'technical', room: 'Lab 201' },
+                        { id: 'fri-4', subject: 'Gestão de Projetos', teacher: 'Prof. Lima', type: 'technical', room: 'Sala 104' },
+                        { id: 'fri-5', subject: 'Marketing Digital', teacher: 'Prof. Oliveira', type: 'technical', room: 'Sala 103' },
+                        { id: 'fri-6', subject: 'Orientação Profissional', teacher: 'Prof. Rodrigues', type: 'technical', room: 'Sala 105' },
+                        { id: 'fri-7', subject: 'Revisão Geral', teacher: 'Prof. Castro', type: 'technical', room: 'Lab 201' }
+                    ]
+                }
+            ];
 
-  <div class="footer">
-    © 2025 Vórtex Deluxe – Todos os direitos reservados
-  </div>
+            // Sample teachers
+            const teachers = [
+                { id: 'silva', name: 'Prof. Silva', subjects: ['Matemática', 'Física'], status: 'active' },
+                { id: 'oliveira', name: 'Prof. Oliveira', subjects: ['Português', 'Redação'], status: 'active' },
+                { id: 'santos', name: 'Prof. Santos', subjects: ['História'], status: 'active' },
+                { id: 'souza', name: 'Prof. Souza', subjects: ['Geografia'], status: 'active' },
+                { id: 'lima', name: 'Prof. Lima', subjects: ['Química', 'Testes de Software'], status: 'active' },
+                { id: 'costa', name: 'Prof. Costa', subjects: ['Física'], status: 'active' },
+                { id: 'dias', name: 'Prof. Dias', subjects: ['Biologia'], status: 'active' },
+                { id: 'ramos', name: 'Prof. Ramos', subjects: ['Sociologia'], status: 'active' },
+                { id: 'mendes', name: 'Prof. Mendes', subjects: ['Educação Física'], status: 'active' },
+                { id: 'rodrigues', name: 'Prof. Rodrigues', subjects: ['Programação Web', 'Desenvolvimento Mobile'], status: 'active' },
+                { id: 'castro', name: 'Prof. Castro', subjects: ['Banco de Dados', 'Cloud Computing'], status: 'active' },
+                { id: 'nunes', name: 'Prof. Nunes', subjects: ['Redes de Computadores', 'Segurança Digital'], status: 'active' },
+                { id: 'almeida', name: 'Prof. Almeida', subjects: ['Inglês Técnico'], status: 'active' }
+            ];
 
-  <script src="js/main.js"></script>
+            // Sample students for attendance
+            const students = [
+                { id: 1, name: 'Ana Silva', status: 'present' },
+                { id: 2, name: 'Bruno Oliveira', status: 'late' },
+                { id: 3, name: 'Carla Santos', status: 'absent' },
+                { id: 4, name: 'Daniel Costa', status: 'present' },
+                { id: 5, name: 'Eduarda Pereira', status: 'present' },
+                { id: 6, name: 'Felipe Mendes', status: 'present' },
+                { id: 7, name: 'Gabriela Rocha', status: 'late' },
+                { id: 8, name: 'Henrique Alves', status: 'present' },
+                { id: 9, name: 'Isabela Lima', status: 'absent' },
+                { id: 10, name: 'João Souza', status: 'present' },
+                { id: 11, name: 'Karina Oliveira', status: 'late' },
+                { id: 12, name: 'Lucas Martins', status: 'present' },
+                { id: 13, name: 'Mariana Costa', status: 'present' },
+                { id: 14, name: 'Nicolas Silva', status: 'present' },
+                { id: 15, name: 'Otávio Santos', status: 'present' }
+            ];
+
+            // Render schedule
+            function renderSchedule() {
+                scheduleData.forEach(day => {
+                    day.periods.forEach(period => {
+                        const cell = document.getElementById(period.id);
+                        cell.innerHTML = '';
+                        
+                        if (period.subject) {
+                            const subjectDiv = document.createElement('div');
+                            subjectDiv.className = `subject ${period.type} ${period.absent ? 'absent-subject' : ''}`;
+                            subjectDiv.draggable = true;
+                            subjectDiv.dataset.id = period.id;
+                            
+                            subjectDiv.innerHTML = `
+                                <div class="subject-title">${period.subject}</div>
+                                <div class="teacher"><i class="fas fa-user"></i> ${period.teacher}</div>
+                                <div class="room"><i class="fas fa-door-open"></i> ${period.room}</div>
+                                ${period.absent ? '<div class="absent-ribbon">AUSENTE</div>' : ''}
+                                <button class="call-btn" data-period="${period.id}">
+                                    <i class="fas fa-clipboard-list"></i> Chamada
+                                </button>
+                            `;
+                            
+                            cell.appendChild(subjectDiv);
+                            
+                            // Add drag events
+                            subjectDiv.addEventListener('dragstart', handleDragStart);
+                        } else {
+                            cell.innerHTML = '<div class="empty-slot"><i class="fas fa-plus-circle"></i> Disponível</div>';
+                        }
+                    });
+                });
+                
+                // Add event listeners to call buttons
+                document.querySelectorAll('.call-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const periodId = this.dataset.period;
+                        openAttendanceModal(periodId);
+                    });
+                });
+            }
+
+            // Render teachers
+            function renderTeachers() {
+                const teacherList = document.getElementById('teacher-list');
+                teacherList.innerHTML = '';
+                
+                teachers.forEach(teacher => {
+                    if (teacher.status === 'active') {
+                        const teacherCard = document.createElement('div');
+                        teacherCard.className = 'teacher-card';
+                        teacherCard.draggable = true;
+                        teacherCard.dataset.id = teacher.id;
+                        
+                        // Get initials for avatar
+                        const names = teacher.name.split(' ');
+                        const initials = names[0].charAt(0) + (names[1] ? names[1].charAt(0) : names[0].charAt(1));
+                        
+                        teacherCard.innerHTML = `
+                            <div class="teacher-avatar">${initials}</div>
+                            <div class="teacher-name">${teacher.name}</div>
+                            <div class="teacher-subjects">${teacher.subjects.join(', ')}</div>
+                        `;
+                        
+                        teacherCard.addEventListener('dragstart', handleDragStart);
+                        teacherList.appendChild(teacherCard);
+                    }
+                });
+            }
+
+            // Check for conflicts
+            function checkConflicts() {
+                // Reset previous conflicts
+                document.querySelectorAll('.conflict').forEach(el => {
+                    el.classList.remove('conflict');
+                });
+                document.getElementById('conflict-analysis').style.display = 'none';
+                document.getElementById('conflicts-list').innerHTML = '';
+                
+                const conflicts = [];
+                const roomUsage = {};
+                
+                // Analyze schedule for conflicts
+                scheduleData.forEach(day => {
+                    day.periods.forEach(period => {
+                        if (period.subject) {
+                            const key = `${day.day}-${period.id.split('-')[1]}`;
+                            
+                            // Track room usage
+                            if (!roomUsage[period.room]) {
+                                roomUsage[period.room] = {};
+                            }
+                            
+                            if (!roomUsage[period.room][key]) {
+                                roomUsage[period.room][key] = [];
+                            }
+                            
+                            roomUsage[period.room][key].push({
+                                subject: period.subject,
+                                teacher: period.teacher,
+                                period: key
+                            });
+                        }
+                    });
+                });
+                
+                // Find room conflicts
+                for (const room in roomUsage) {
+                    for (const time in roomUsage[room]) {
+                        if (roomUsage[room][time].length > 1) {
+                            conflicts.push({
+                                type: 'room',
+                                room: room,
+                                time: time,
+                                items: roomUsage[room][time]
+                            });
+                        }
+                    }
+                }
+                
+                // Find teacher conflicts
+                const teacherSchedule = {};
+                scheduleData.forEach(day => {
+                    day.periods.forEach(period => {
+                        if (period.teacher) {
+                            const key = `${day.day}-${period.id.split('-')[1]}`;
+                            
+                            if (!teacherSchedule[period.teacher]) {
+                                teacherSchedule[period.teacher] = {};
+                            }
+                            
+                            if (!teacherSchedule[period.teacher][key]) {
+                                teacherSchedule[period.teacher][key] = [];
+                            }
+                            
+                            teacherSchedule[period.teacher][key].push({
+                                subject: period.subject,
+                                room: period.room,
+                                period: key
+                            });
+                        }
+                    });
+                });
+                
+                for (const teacher in teacherSchedule) {
+                    for (const time in teacherSchedule[teacher]) {
+                        if (teacherSchedule[teacher][time].length > 1) {
+                            conflicts.push({
+                                type: 'teacher',
+                                teacher: teacher,
+                                time: time,
+                                items: teacherSchedule[teacher][time]
+                            });
+                        }
+                    }
+                }
+                
+                // Highlight conflicts in schedule
+                conflicts.forEach(conflict => {
+                    conflict.items.forEach(item => {
+                        const cell = document.getElementById(item.period.replace('-', '-'));
+                        if (cell) {
+                            cell.classList.add('conflict');
+                        }
+                    });
+                });
+                
+                // Show conflict analysis
+                if (conflicts.length > 0) {
+                    const conflictList = document.getElementById('conflicts-list');
+                    conflicts.forEach(conflict => {
+                        const conflictDiv = document.createElement('div');
+                        conflictDiv.className = 'conflict-item';
+                        
+                        if (conflict.type === 'room') {
+                            conflictDiv.innerHTML = `
+                                <div class="conflict-header">
+                                    <span><i class="fas fa-door-open"></i> Conflito de Sala: ${conflict.room}</span>
+                                    <span>${getPeriodTime(conflict.time)}</span>
+                                </div>
+                                <p>Múltiplas aulas agendadas na mesma sala:</p>
+                                <ul>
+                                    ${conflict.items.map(item => 
+                                        `<li><i class="fas fa-book"></i> ${item.subject} - ${item.teacher}</li>`
+                                    ).join('')}
+                                </ul>
+                            `;
+                        } else {
+                            conflictDiv.innerHTML = `
+                                <div class="conflict-header">
+                                    <span><i class="fas fa-chalkboard-teacher"></i> Conflito de Professor: ${conflict.teacher}</span>
+                                    <span>${getPeriodTime(conflict.time)}</span>
+                                </div>
+                                <p>Professor alocado em múltiplas aulas:</p>
+                                <ul>
+                                    ${conflict.items.map(item => 
+                                        `<li><i class="fas fa-book"></i> ${item.subject} (${item.room})</li>`
+                                    ).join('')}
+                                </ul>
+                            `;
+                        }
+                        
+                        conflictList.appendChild(conflictDiv);
+                    });
+                    
+                    document.getElementById('conflict-analysis').style.display = 'block';
+                    showNotification(`Verificação de conflitos: ${conflicts.length} conflito(s) encontrado(s)!`, 'conflict');
+                } else {
+                    showNotification('Verificação de conflitos: Nenhum conflito encontrado!', 'success');
+                }
+            }
+            
+            // Helper function to get period time
+            function getPeriodTime(periodKey) {
+                const periodId = periodKey.split('-')[1];
+                const periodMap = {
+                    '1': '07:30 - 08:15',
+                    '2': '08:15 - 09:00',
+                    '3': '09:00 - 09:45',
+                    '4': '09:45 - 10:30',
+                    '5': '10:45 - 11:30',
+                    '6': '11:30 - 12:15',
+                    '7': '12:15 - 12:40'
+                };
+                return periodMap[periodId] || periodKey;
+            }
+
+            // Open attendance modal
+            function openAttendanceModal(periodId) {
+                // Find the period data
+                let periodData = null;
+                for (const day of scheduleData) {
+                    const period = day.periods.find(p => p.id === periodId);
+                    if (period) {
+                        periodData = period;
+                        break;
+                    }
+                }
+                
+                if (!periodData) return;
+                
+                // Update modal title
+                document.getElementById('modal-title').textContent = periodData.subject;
+                
+                // Update class info
+                document.getElementById('class-info').innerHTML = `
+                    <p><strong><i class="fas fa-chalkboard-teacher"></i> Professor:</strong> ${periodData.teacher}</p>
+                    <p><strong><i class="fas fa-clock"></i> Horário:</strong> ${document.querySelector(`#${periodId}`).previousElementSibling.textContent}</p>
+                    <p><strong><i class="fas fa-door-open"></i> Sala:</strong> ${periodData.room}</p>
+                `;
+                
+                // Render attendance list
+                const attendanceList = document.getElementById('modal-attendance-list');
+                attendanceList.innerHTML = '';
+                
+                students.forEach(student => {
+                    const studentDiv = document.createElement('div');
+                    studentDiv.className = 'student';
+                    studentDiv.dataset.id = student.id;
+                    
+                    // Get initials for avatar
+                    const names = student.name.split(' ');
+                    const initials = names[0].charAt(0) + (names[1] ? names[1].charAt(0) : names[0].charAt(1));
+                    
+                    studentDiv.innerHTML = `
+                        <div class="student-info">
+                            <div class="student-avatar">${initials}</div>
+                            <div>${student.name}</div>
+                        </div>
+                        <div class="status ${student.status}">${student.status === 'present' ? 'Presente' : 
+                            student.status === 'absent' ? 'Falta' : 'Atraso'}</div>
+                        <div class="attendance-options">
+                            <div class="attendance-option present" data-status="present">Presente</div>
+                            <div class="attendance-option absent" data-status="absent">Falta</div>
+                            <div class="attendance-option late" data-status="late">Atraso</div>
+                        </div>
+                    `;
+                    
+                    attendanceList.appendChild(studentDiv);
+                    
+                    // Add event listeners to status options
+                    studentDiv.querySelectorAll('.attendance-option').forEach(option => {
+                        option.addEventListener('click', function() {
+                            const status = this.dataset.status;
+                            updateStudentStatus(student.id, status);
+                        });
+                    });
+                });
+                
+                // Show modal
+                document.getElementById('attendance-modal').classList.add('active');
+            }
+            
+            // Update student status
+            function updateStudentStatus(studentId, status) {
+                const student = students.find(s => s.id === studentId);
+                if (student) {
+                    student.status = status;
+                    
+                    // Update UI
+                    const studentDiv = document.querySelector(`.student[data-id="${studentId}"]`);
+                    if (studentDiv) {
+                        studentDiv.querySelector('.status').className = `status ${status}`;
+                        studentDiv.querySelector('.status').textContent = 
+                            status === 'present' ? 'Presente' : 
+                            status === 'absent' ? 'Falta' : 'Atraso';
+                    }
+                }
+            }
+            
+            // Close modal
+            document.getElementById('close-modal').addEventListener('click', function() {
+                document.getElementById('attendance-modal').classList.remove('active');
+            });
+            
+            // Save attendance
+            document.getElementById('save-attendance').addEventListener('click', function() {
+                showNotification('Frequência salva com sucesso!', 'success');
+                document.getElementById('attendance-modal').classList.remove('active');
+            });
+
+            // Drag and drop functionality
+            let dragSrcEl = null;
+            
+            function handleDragStart(e) {
+                dragSrcEl = this;
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', this.innerHTML);
+                
+                // Add visual feedback
+                this.style.opacity = '0.6';
+            }
+            
+            function handleDragOver(e) {
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
+                e.dataTransfer.dropEffect = 'move';
+                return false;
+            }
+            
+            function handleDragEnter(e) {
+                this.classList.add('drag-over');
+            }
+            
+            function handleDragLeave(e) {
+                this.classList.remove('drag-over');
+            }
+            
+            function handleDrop(e) {
+                if (e.stopPropagation) {
+                    e.stopPropagation();
+                }
+                
+                if (dragSrcEl !== this) {
+                    dragSrcEl.style.opacity = '1';
+                    
+                    // Check if dropping on a subject cell
+                    if (this.classList.contains('subject')) {
+                        // Swap subjects
+                        const dragInnerHTML = dragSrcEl.innerHTML;
+                        dragSrcEl.innerHTML = this.innerHTML;
+                        this.innerHTML = dragInnerHTML;
+                    } else if (this.id && this.id.startsWith('mon-') || this.id.startsWith('tue-') || 
+                               this.id.startsWith('wed-') || this.id.startsWith('thu-') || 
+                               this.id.startsWith('fri-')) {
+                        // Dropping on an empty slot
+                        if (dragSrcEl.classList.contains('teacher-card')) {
+                            // Adding a teacher to the schedule
+                            const teacherId = dragSrcEl.dataset.id;
+                            const teacher = teachers.find(t => t.id === teacherId);
+                            
+                            if (teacher) {
+                                const subjectDiv = document.createElement('div');
+                                subjectDiv.className = 'subject technical';
+                                subjectDiv.draggable = true;
+                                subjectDiv.dataset.id = this.id;
+                                
+                                subjectDiv.innerHTML = `
+                                    <div class="subject-title">${teacher.subjects[0]}</div>
+                                    <div class="teacher"><i class="fas fa-user"></i> ${teacher.name}</div>
+                                    <div class="room"><i class="fas fa-door-open"></i> Sala ???</div>
+                                    <button class="call-btn" data-period="${this.id}">
+                                        <i class="fas fa-clipboard-list"></i> Chamada
+                                    </button>
+                                `;
+                                
+                                this.innerHTML = '';
+                                this.appendChild(subjectDiv);
+                                
+                                // Add drag events
+                                subjectDiv.addEventListener('dragstart', handleDragStart);
+                                
+                                // Add event listener to call button
+                                subjectDiv.querySelector('.call-btn').addEventListener('click', function() {
+                                    const periodId = this.dataset.period;
+                                    openAttendanceModal(periodId);
+                                });
+                                
+                                showNotification(`Aula de ${teacher.subjects[0]} adicionada com sucesso!`, 'success');
+                            }
+                        } else if (dragSrcEl.classList.contains('subject')) {
+                            // Moving a subject to an empty slot
+                            this.innerHTML = dragSrcEl.innerHTML;
+                            dragSrcEl.parentNode.innerHTML = '<div class="empty-slot"><i class="fas fa-plus-circle"></i> Disponível</div>';
+                            showNotification('Aula movida com sucesso!', 'success');
+                        }
+                    }
+                }
+                
+                this.classList.remove('drag-over');
+                return false;
+            }
+            
+            function handleDragEnd(e) {
+                document.querySelectorAll('td').forEach(cell => {
+                    cell.classList.remove('drag-over');
+                });
+                if (dragSrcEl) dragSrcEl.style.opacity = '1';
+            }
+            
+            // Setup drag and drop
+            function setupDragAndDrop() {
+                const cells = document.querySelectorAll('td');
+                cells.forEach(cell => {
+                    cell.addEventListener('dragover', handleDragOver);
+                    cell.addEventListener('dragenter', handleDragEnter);
+                    cell.addEventListener('dragleave', handleDragLeave);
+                    cell.addEventListener('drop', handleDrop);
+                    cell.addEventListener('dragend', handleDragEnd);
+                });
+            }
+            
+            // Tab switching
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all tab content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show the corresponding tab content
+                    const tabName = this.dataset.tab;
+                    document.getElementById(`${tabName}-tab`).classList.add('active');
+                });
+            });
+            
+            // Show notification
+            function showNotification(message, type) {
+                const notifications = document.querySelector('.notifications');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type === 'conflict' ? 'conflict' : type === 'success' ? '' : 'absent'}`;
+                
+                notification.innerHTML = `
+                    <div class="notification-header">
+                        <div class="notification-title">${type === 'conflict' ? 'Conflito Detectado' : type === 'success' ? 'Sucesso' : 'Aviso'}</div>
+                        <div class="notification-time">Agora</div>
+                    </div>
+                    <div class="notification-content">
+                        ${message}
+                    </div>
+                `;
+                
+                notifications.insertBefore(notification, notifications.firstChild);
+                
+                // Update badge count
+                const badge = document.querySelector('.badge');
+                badge.textContent = parseInt(badge.textContent) + 1;
+            }
+            
+            // Initialize
+            renderSchedule();
+            renderTeachers();
+            setupDragAndDrop();
+            
+            // Event listeners
+            document.getElementById('class-select').addEventListener('change', function() {
+                showNotification(`Turma alterada para: ${this.options[this.selectedIndex].text}`, 'success');
+            });
+            
+            document.getElementById('check-btn').addEventListener('click', checkConflicts);
+            
+            document.getElementById('add-event-btn').addEventListener('click', function() {
+                showNotification('Formulário para adicionar evento aberto!', 'success');
+            });
+            
+            document.getElementById('inactive-btn').addEventListener('click', function() {
+                const teacher = prompt('Digite o nome do professor para marcar como inativo:');
+                if (teacher) {
+                    showNotification(`Professor ${teacher} marcado como inativo com sucesso!`, 'success');
+                }
+            });
+            
+            // Save event
+            document.querySelector('.btn-save').addEventListener('click', function() {
+                const eventType = document.getElementById('event-type').value;
+                const eventDate = document.getElementById('event-date').value;
+                
+                if (!eventDate) {
+                    showNotification('Por favor, selecione uma data para o evento.', 'warning');
+                    return;
+                }
+                
+                showNotification(`Evento "${eventType}" agendado para ${eventDate} com sucesso!`, 'success');
+            });
+            
+            // Submit absence justification
+            document.querySelector('.btn-primary').addEventListener('click', function() {
+                const teacher = document.getElementById('teacher-select').value;
+                const date = document.getElementById('absence-date').value;
+                
+                if (!date) {
+                    showNotification('Por favor, selecione a data da ausência.', 'warning');
+                    return;
+                }
+                
+                showNotification(`Ausência do ${teacher} justificada para ${date}!`, 'success');
+            });
+            
+            // Simulate real-time notifications
+            setInterval(() => {
+                const notifications = [
+                    "Reunião de pais e mestres agendada para próxima semana",
+                    "Novo material didático disponível na plataforma",
+                    "Lembrete: Prova de Matemática na próxima sexta-feira"
+                ];
+                
+                const types = ['', 'conflict', 'absent'];
+                const randomIndex = Math.floor(Math.random() * notifications.length);
+                
+                if (Math.random() > 0.7) { // 30% chance of a notification
+                    showNotification(notifications[randomIndex], types[Math.floor(Math.random() * types.length)]);
+                }
+            }, 30000); // Every 30 seconds
+        });
+   
+ </script>
+  </html>
 </body>
-</html>

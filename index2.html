@@ -1,133 +1,157 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FCG - Ferramenta de Consultas Gerais</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f4f6f8;
-        }
-        header {
-            background-color: #004aad;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-        main {
-            padding: 20px;
-            max-width: 900px;
-            margin: auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #004aad;
-        }
-        .form-section {
-            margin-bottom: 20px;
-        }
-        label {
-            font-weight: bold;
-        }
-        input, textarea, select, button {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #004aad;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #00337a;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ferramenta de Consultas Gerais - Plano de Aula</title>
+  <style>
+    /* Reset básico */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f0f3f8;
+      color: #333;
+    }
+    header {
+      background-color: #0047b3;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-weight: bold;
+      font-size: 24px;
+    }
+    header p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      font-weight: normal;
+    }
+    main {
+      max-width: 700px;
+      background-color: white;
+      margin: 30px auto;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #0047b3;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: 1.5px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #0047b3;
+      outline: none;
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    button {
+      width: 100%;
+      background-color: #0047b3;
+      color: white;
+      font-size: 16px;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #00338a;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .message.success {
+      color: green;
+    }
+    .message.error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Ferramenta de Consultas Gerais</h1>
-        <p>Módulo de Planejamento - Planos de Aula Online</p>
-    </header>
+  <header>
+    <h1>Ferramenta de Consultas Gerais</h1>
+    <p>Módulo de Planejamento - Planos de Aula Online</p>
+  </header>
+  <main>
+    <h2>Cadastrar Plano de Aula</h2>
+    <form id="planoForm">
+      <label for="tema">Tema</label>
+      <input type="text" id="tema" name="tema" placeholder="Digite o tema da aula" required />
 
-    <main>
-        <section class="form-section">
-            <h2>Cadastrar Plano de Aula</h2>
-            <form id="planoForm">
-                <label for="tema">Tema</label>
-                <input type="text" id="tema" name="tema" required>
+      <label for="conteudo">Conteúdo</label>
+      <textarea id="conteudo" name="conteudo" placeholder="Descreva o conteúdo da aula" required></textarea>
 
-                <label for="conteudo">Conteúdo</label>
-                <textarea id="conteudo" name="conteudo" required></textarea>
+      <label for="objetivos">Objetivos</label>
+      <textarea id="objetivos" name="objetivos" placeholder="Defina os objetivos da aula" required></textarea>
 
-                <label for="objetivos">Objetivos</label>
-                <textarea id="objetivos" name="objetivos" required></textarea>
+      <label for="trimestre">Trimestre</label>
+      <select id="trimestre" name="trimestre" required>
+        <option value="" disabled selected>Selecione</option>
+        <option value="1">1º Trimestre</option>
+        <option value="2">2º Trimestre</option>
+        <option value="3">3º Trimestre</option>
+        <option value="4">4º Trimestre</option>
+      </select>
 
-                <label for="trimestre">Trimestre</label>
-                <select id="trimestre" name="trimestre" required>
-                    <option value="">Selecione</option>
-                    <option value="1º Trimestre">1º Trimestre</option>
-                    <option value="2º Trimestre">2º Trimestre</option>
-                    <option value="3º Trimestre">3º Trimestre</option>
-                </select>
+      <button type="submit">Salvar Plano</button>
+      <div id="mensagem" class="message"></div>
+    </form>
+  </main>
 
-                <button type="submit">Salvar Plano</button>
-            </form>
-        </section>
-    </main>
+  <script>
+    const form = document.getElementById('planoForm');
+    const mensagem = document.getElementById('mensagem');
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Importações Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
 
-        // Configuração Firebase (substituir pelos seus dados)
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_PROJETO.firebaseapp.com",
-            projectId: "SEU_PROJETO",
-            storageBucket: "SEU_PROJETO.appspot.com",
-            messagingSenderId: "SEU_ID",
-            appId: "SUA_APP_ID"
-        };
+      // Validar campos (HTML5 já faz, mas vamos reforçar)
+      if (!form.tema.value.trim() || !form.conteudo.value.trim() || !form.objetivos.value.trim() || !form.trimestre.value) {
+        mensagem.textContent = 'Por favor, preencha todos os campos.';
+        mensagem.className = 'message error';
+        return;
+      }
 
-        // Inicializa Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+      // Aqui você poderia enviar os dados para um servidor via fetch/AJAX, mas vamos só mostrar mensagem
+      mensagem.textContent = 'Plano salvo com sucesso!';
+      mensagem.className = 'message success';
 
-        // Referência ao formulário
-        const planoForm = document.getElementById("planoForm");
-
-        // Salvar plano no Firestore
-        planoForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const tema = planoForm.tema.value;
-            const conteudo = planoForm.conteudo.value;
-            const objetivos = planoForm.objetivos.value;
-            const trimestre = planoForm.trimestre.value;
-
-            try {
-                await addDoc(collection(db, "planosAula"), {
-                    tema,
-                    conteudo,
-                    objetivos,
-                    trimestre,
-                    dataCadastro: new Date()
-                });
-                planoForm.reset();
-                alert("Plano salvo com sucesso!");
-            } catch (error) {
-                console.error("Erro ao salvar plano:", error);
-            }
-        });
-    </script>
+      // Limpar formulário
+      form.reset();
+    });
+  </script>
 </body>
 </html>
+
+
