@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ferramenta de Consultas Gerais - Plano de Aula</title>
+  <style>
+    /* Reset básico */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f0f3f8;
+      color: #333;
+    }
+    header {
+      background-color: #0047b3;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-weight: bold;
+      font-size: 24px;
+    }
+    header p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      font-weight: normal;
+    }
+    main {
+      max-width: 700px;
+      background-color: white;
+      margin: 30px auto;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #0047b3;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: 1.5px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #0047b3;
+      outline: none;
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    button {
+      width: 100%;
+      background-color: #0047b3;
+      color: white;
+      font-size: 16px;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #00338a;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .message.success {
+      color: green;
+    }
+    .message.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Ferramenta de Consultas Gerais</h1>
+    <p>Módulo de Planejamento - Planos de Aula Online</p>
+  </header>
+  <main>
+    <h2>Cadastrar Plano de Aula</h2>
+    <form id="planoForm">
+      <label for="tema">Tema</label>
+      <input type="text" id="tema" name="tema" placeholder="Digite o tema da aula" required />
+
+      <label for="conteudo">Conteúdo</label>
+      <textarea id="conteudo" name="conteudo" placeholder="Descreva o conteúdo da aula" required></textarea>
+
+      <label for="objetivos">Objetivos</label>
+      <textarea id="objetivos" name="objetivos" placeholder="Defina os objetivos da aula" required></textarea>
+
+      <label for="trimestre">Trimestre</label>
+      <select id="trimestre" name="trimestre" required>
+        <option value="" disabled selected>Selecione</option>
+        <option value="1">1º Trimestre</option>
+        <option value="2">2º Trimestre</option>
+        <option value="3">3º Trimestre</option>
+        <option value="4">4º Trimestre</option>
+      </select>
+
+      <button type="submit">Salvar Plano</button>
+      <div id="mensagem" class="message"></div>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('planoForm');
+    const mensagem = document.getElementById('mensagem');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Validar campos (HTML5 já faz, mas vamos reforçar)
+      if (!form.tema.value.trim() || !form.conteudo.value.trim() || !form.objetivos.value.trim() || !form.trimestre.value) {
+        mensagem.textContent = 'Por favor, preencha todos os campos.';
+        mensagem.className = 'message error';
+        return;
+      }
+
+      // Aqui você poderia enviar os dados para um servidor via fetch/AJAX, mas vamos só mostrar mensagem
+      mensagem.textContent = 'Plano salvo com sucesso!';
+      mensagem.className = 'message success';
+
+      // Limpar formulário
+      form.reset();
+    });
+  </script>
+</body>
+</html>
+
+
