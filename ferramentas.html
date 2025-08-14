@@ -1,375 +1,307 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ferramentas – Verificador de Conflitos</title>
-  <style>
-    :root {
-      --cor-primaria: #007bff;
-      --cor-header: #e0e0e0;
-      --cor-fundo: #f7f9fc;
-      --cor-texto: #222;
-      --border-radius: 8px;
-      --gap: 1rem;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Arial, sans-serif;
-      background: var(--cor-fundo);
-      color: var(--cor-texto);
-      min-height: 100vh;
-    }
-    header {
-      background: var(--cor-header);
-      padding: 1.5rem;
-      text-align: center;
-    }
-    header h1 {
-      margin-bottom: .5rem;
-      font-size: 2rem;
-    }
-    .tabs {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin: 1rem 0;
-      flex-wrap: wrap;
-    }
-    .tabs button {
-      background: var(--cor-primaria);
-      color: #fff;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    .tabs button:hover {
-      background: #0056b3;
-    }
-    .controls {
-      max-width: 1200px;
-      margin: 1rem auto;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: var(--gap);
-      padding: 0 1rem;
-    }
-    .controls-left,
-    .controls-right {
-      display: flex;
-      gap: var(--gap);
-      flex-wrap: wrap;
-    }
-    .controls button,
-    .controls a {
-      border: none;
-      border-radius: var(--border-radius);
-      padding: 0.6rem 1.2rem;
-      font-size: 1rem;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .controls button {
-      background: var(--cor-primaria);
-      color: #fff;
-    }
-    .controls button:hover {
-      background: #0056b3;
-    }
-    #btnGerador {
-      background: var(--cor-header);
-      color: var(--cor-texto);
-    }
-    #btnGerador:hover {
-      background: #d5d5d5;
-    }
-    #btnAddEvento {
-      background: #28a745;
-    }
-    #btnAddEvento:hover {
-      background: #1e7e34;
-    }
-    #btnMarcarInativo {
-      background: #dc3545;
-    }
-    #btnMarcarInativo:hover {
-      background: #a71d2a;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto 2rem;
-      padding: 0 1rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      background: #fff;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 0.8rem;
-      text-align: center;
-      vertical-align: top;
-      position: relative;
-      height: 60px;
-      cursor: pointer;
-    }
-    th {
-      background: var(--cor-primaria);
-      color: #fff;
-    }
-    td.selected {
-      outline: 3px solid #ff9800;
-    }
-    .block {
-      background: var(--cor-header);
-      border-radius: var(--border-radius);
-      padding: 0.3rem 0.5rem;
-      margin: 2px 0;
-      cursor: move;
-      user-select: none;
-    }
-    .block.conflict {
-      background: #dc3545;
-      color: #fff;
-    }
-    .footer {
-      text-align: center;
-      color: #777;
-      margin-top: 2rem;
-    }
-    input[type="file"] { display: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão Escolar Integrado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="ferramentas.css">
 </head>
 <body>
-  <header>
-    <h1>Verificador de Conflitos de Horários</h1>
-    <p>Clique em “Importar CSV” para carregar o horários gerado</p>
-  </header>
-
-  <div class="tabs">
-    <button onclick="alert('Grade Horária')" aria-label="Grade Horária">Grade Horária</button>
-    <button onclick="alert('Professores')" aria-label="Professores">Professores</button>
-    <button onclick="alert('Calendário')" aria-label="Calendário">Calendário</button>
-  </div>
-
-  <div class="controls">
-    <div class="controls-left">
-      <a href="gerador.html" id="btnGerador" aria-label="Ir para o gerador">Gerar</a>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>Sistema de Gestão Escolar Integrado</h1>
+            </div>
+            <div class="controls">
+                <select id="class-select">
+                    <option value="1ds">1DS - Desenvolvimento de Sistemas</option>
+                    <option value="2ds" selected>2DS - Desenvolvimento de Sistemas</option>
+                    <option value="3ds">3DS - Desenvolvimento de Sistemas</option>
+                    <option value="1em">1EM - Ensino Médio Regular</option>
+                    <option value="2em">2EM - Ensino Médio Regular</option>
+                    <option value="3em">3EM - Ensino Médio Regular</option>
+                </select>
+                <select id="shift-select">
+                    <option value="morning">Manhã (7:30-12:40)</option>
+                    <option value="afternoon" selected>Tarde (13:00-18:15)</option>
+                    <option value="night">Noite</option>
+                </select>
+                <button id="import-btn"><i class="fas fa-file-import"></i> Importar CSV</button>
+                <button id="check-btn"><i class="fas fa-exclamation-triangle"></i> Verificar Conflitos</button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="schedule-section">
+                <div class="section-title">
+                    <h2><i class="far fa-calendar-alt"></i> Grade Horária - Turma 2DS</h2>
+                    <div>
+                        <button id="add-event-btn" class="btn btn-primary"><i class="fas fa-plus"></i> Adicionar Evento</button>
+                        <button id="inactive-btn" class="btn btn-danger"><i class="fas fa-user-slash"></i> Marcar Inativo</button>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="schedule">Grade Horária</div>
+                    <div class="tab" data-tab="teachers">Professores</div>
+                    <div class="tab" data-tab="calendar">Calendário</div>
+                </div>
+                
+                <div class="tab-content active" id="schedule-tab">
+                    <table id="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Horário</th>
+                                <th>Segunda</th>
+                                <th>Terça</th>
+                                <th>Quarta</th>
+                                <th>Quinta</th>
+                                <th>Sexta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="time-col">07:30 - 08:15</td>
+                                <td id="mon-1"></td>
+                                <td id="tue-1"></td>
+                                <td id="wed-1"></td>
+                                <td id="thu-1"></td>
+                                <td id="fri-1"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">08:15 - 09:00</td>
+                                <td id="mon-2"></td>
+                                <td id="tue-2"></td>
+                                <td id="wed-2"></td>
+                                <td id="thu-2"></td>
+                                <td id="fri-2"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">09:00 - 09:45</td>
+                                <td id="mon-3"></td>
+                                <td id="tue-3"></td>
+                                <td id="wed-3"></td>
+                                <td id="thu-3"></td>
+                                <td id="fri-3"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">09:45 - 10:30</td>
+                                <td id="mon-4"></td>
+                                <td id="tue-4"></td>
+                                <td id="wed-4"></td>
+                                <td id="thu-4"></td>
+                                <td id="fri-4"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">10:45 - 11:30</td>
+                                <td id="mon-5"></td>
+                                <td id="tue-5"></td>
+                                <td id="wed-5"></td>
+                                <td id="thu-5"></td>
+                                <td id="fri-5"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">11:30 - 12:15</td>
+                                <td id="mon-6"></td>
+                                <td id="tue-6"></td>
+                                <td id="wed-6"></td>
+                                <td id="thu-6"></td>
+                                <td id="fri-6"></td>
+                            </tr>
+                            <tr>
+                                <td class="time-col">12:15 - 12:40</td>
+                                <td id="mon-7"></td>
+                                <td id="tue-7"></td>
+                                <td id="wed-7"></td>
+                                <td id="thu-7"></td>
+                                <td id="fri-7"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Conflict Analysis Section -->
+                    <div class="conflict-analysis" id="conflict-analysis" style="display: none;">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Análise de Conflitos</h3>
+                        <div id="conflicts-list"></div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="teachers-tab">
+                    <h3>Professores Disponíveis</h3>
+                    <div class="teacher-list" id="teacher-list">
+                        <!-- Teachers will be loaded here -->
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="calendar-tab">
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <i class="fas fa-calendar-alt" style="font-size: 4rem; color: var(--primary-light); margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">Visualização de Calendário</h3>
+                        <p style="color: var(--gray); max-width: 600px; margin: 0 auto;">
+                            Esta funcionalidade permite visualizar todos os eventos escolares em uma visão de calendário mensal ou semanal.
+                            Você pode alternar entre visualizações e ver reuniões, feriados e provas agendadas.
+                        </p>
+                        <button class="btn btn-primary" style="margin-top: 25px;">
+                            <i class="fas fa-sync-alt"></i> Ativar Visualização de Calendário
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tools moved below the table -->
+            <div class="tools-container">
+                <div class="card">
+                    <div class="section-title">
+                        <h2><i class="fas fa-bell"></i> Notificações</h2>
+                        <span class="badge">3</span>
+                    </div>
+                    
+                    <div class="notifications">
+                        <div class="notification absent">
+                            <div class="notification-header">
+                                <div class="notification-title">Justificativa de ausência - Prof. Silva</div>
+                                <div class="notification-time">2h atrás</div>
+                            </div>
+                            <div class="notification-content">
+                                Estarei ausente hoje devido a um compromisso médico. Anexo o atestado médico.
+                            </div>
+                        </div>
+                        
+                        <div class="notification conflict">
+                            <div class="notification-header">
+                                <div class="notification-title">Conflito detectado na turma 2DS</div>
+                                <div class="notification-time">Ontem</div>
+                            </div>
+                            <div class="notification-content">
+                                Conflito de horário detectado: Prof. Oliveira e Prof. Santos estão alocados na mesma sala às Terças 10:15.
+                            </div>
+                        </div>
+                        
+                        <div class="notification">
+                            <div class="notification-header">
+                                <div class="notification-title">Reunião pedagógica agendada</div>
+                                <div class="notification-time">5h atrás</div>
+                            </div>
+                            <div class="notification-content">
+                                Reunião pedagógica marcada para sexta-feira, 14/08, às 14:00 na sala dos professores.
+                            </div>
+                        </div>
+                        
+                        <div class="notification">
+                            <div class="notification-header">
+                                <div class="notification-title">Novo evento: Semana de Tecnologia</div>
+                                <div class="notification-time">Ontem</div>
+                            </div>
+                            <div class="notification-content">
+                                Participe da Semana de Tecnologia de 20 a 24 de agosto com palestras e workshops.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="section-title">
+                        <h2><i class="fas fa-plus-circle"></i> Adicionar Evento</h2>
+                    </div>
+                    
+                    <form class="event-form">
+                        <div class="form-group">
+                            <label for="event-type"><i class="fas fa-tag"></i> Tipo de Evento</label>
+                            <select id="event-type">
+                                <option value="substitute">Aula Substituta</option>
+                                <option value="meeting">Reunião Pedagógica</option>
+                                <option value="holiday">Feriado</option>
+                                <option value="exam">Prova Oficial</option>
+                                <option value="institutional">Evento Institucional</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="event-date"><i class="fas fa-calendar-day"></i> Data</label>
+                            <input type="date" id="event-date">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="start-time"><i class="fas fa-clock"></i> Hora Início</label>
+                            <input type="time" id="start-time">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="end-time"><i class="fas fa-clock"></i> Hora Fim</label>
+                            <input type="time" id="end-time">
+                        </div>
+                        
+                        <div class="form-group full">
+                            <label for="event-desc"><i class="fas fa-align-left"></i> Descrição</label>
+                            <textarea id="event-desc" placeholder="Descreva o evento..."></textarea>
+                        </div>
+                        
+                        <button type="button" class="btn btn-save full">
+                            <i class="fas fa-save"></i> Salvar Evento
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <div class="section-title">
+                        <h2><i class="fas fa-user-md"></i> Justificar Ausência</h2>
+                    </div>
+                    
+                    <form class="absence-form">
+                        <div class="form-group">
+                            <label for="teacher-select"><i class="fas fa-chalkboard-teacher"></i> Professor</label>
+                            <select id="teacher-select">
+                                <option value="silva">Prof. Silva</option>
+                                <option value="oliveira">Prof. Oliveira</option>
+                                <option value="santos">Prof. Santos</option>
+                                <option value="souza">Prof. Souza</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="absence-date"><i class="fas fa-calendar-times"></i> Data da Ausência</label>
+                            <input type="date" id="absence-date">
+                        </div>
+                        
+                        <div class="form-group full">
+                            <label for="absence-desc"><i class="fas fa-file-alt"></i> Descrição</label>
+                            <textarea id="absence-desc" placeholder="Detalhe o motivo da ausência..."></textarea>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary full">
+                            <i class="fas fa-paper-plane"></i> Enviar Justificativa
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Sistema de Gestão Escolar Integrado © 2025 | ETEC - Centro Paula Souza</p>
+            <p>Desenvolvido para gerenciamento de cursos técnicos e ensino médio regular</p>
+        </div>
     </div>
-    <div class="controls-right">
-      <button id="btnImportar" aria-label="Importar CSV">Importar CSV</button>
-      <button id="btnCheck" aria-label="Verificar Conflitos">Verificar Conflitos</button>
-      <button id="btnAddEvento" aria-label="Adicionar Evento">Adicionar Evento</button>
-      <button id="btnMarcarInativo" aria-label="Marcar Inativo">Marcar Inativo</button>
-      <input type="file" id="fileInput" accept=".csv" />
+
+    <!-- Attendance Modal -->
+    <div class="attendance-modal" id="attendance-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-clipboard-list"></i> <span id="modal-title">Registro de Frequência</span></h2>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <div class="class-info" id="class-info"></div>
+            <div class="attendance-list" id="modal-attendance-list">
+                <!-- Attendance will be loaded here -->
+            </div>
+            <button class="btn btn-primary" id="save-attendance" style="margin-top: 20px;">
+                <i class="fas fa-save"></i> Salvar Frequência
+            </button>
+        </div>
     </div>
-  </div>
 
-  <div class="container">
-    <table id="tabelaHorarios">
-      <thead>
-        <tr>
-          <th>Horário</th>
-          <th>Segunda</th>
-          <th>Terça</th>
-          <th>Quarta</th>
-          <th>Quinta</th>
-          <th>Sexta</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div class="footer">
-    © 2025 Cronóstrofo Deluxe – Todos os direitos reservados
-  </div>
-
-  <script>
-    const btnImportar  = document.getElementById('btnImportar');
-    const btnCheck     = document.getElementById('btnCheck');
-    const btnAddEvento = document.getElementById('btnAddEvento');
-    const btnInativo   = document.getElementById('btnMarcarInativo');
-    const fileInput    = document.getElementById('fileInput');
-    const tabela       = document.getElementById('tabelaHorarios');
-    const tbody        = tabela.tBodies[0];
-
-    let selectedCell = null;
-
-    const horarios = [
-      '07:30 - 08:20',
-      '08:20 - 09:10',
-      '09:10 - 10:00',
-      '10:00 - 10:20', // intervalo
-      '10:20 - 11:10',
-      '11:10 - 12:00',
-      '12:00 - 12:50'
-    ];
-
-    function initTable() {
-      tbody.innerHTML = '';
-      horarios.forEach(h => {
-        const tr = document.createElement('tr');
-        const td0 = document.createElement('td');
-        td0.textContent = h;
-        tr.appendChild(td0);
-
-        if (h === '10:00 - 10:20') {
-          const tdI = document.createElement('td');
-          tdI.colSpan = 5;
-          tdI.textContent = 'Intervalo';
-          tdI.className = 'intervalo';
-          tr.appendChild(tdI);
-        } else {
-          for (let i = 0; i < 5; i++) {
-            const cell = document.createElement('td');
-            cell.addEventListener('click', () => selectCell(cell));
-            tr.appendChild(cell);
-          }
-        }
-        tbody.appendChild(tr);
-      });
-    }
-
-    function selectCell(cell) {
-      if (selectedCell) selectedCell.classList.remove('selected');
-      selectedCell = cell;
-      cell.classList.add('selected');
-    }
-
-    btnImportar.addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', e => {
-      const file = e.target.files[0];
-      if (!file) return alert('Nenhum arquivo selecionado');
-      const reader = new FileReader();
-
-      reader.onerror = () => alert('Erro ao ler o arquivo CSV');
-      reader.onload  = () => {
-        try {
-          initTable();
-          preencherTabela(reader.result);
-          makeDraggable();
-          checkConflicts();
-        } catch {
-          alert('Formato de CSV inválido ou corrompido');
-          initTable();
-        }
-      };
-      reader.readAsText(file, 'UTF-8');
-    });
-
-    function preencherTabela(csv) {
-      const linhas = csv.trim().split('\n');
-      if (linhas.length < 2) throw new Error('CSV sem dados');
-
-      linhas.slice(1).forEach
-      linhas.slice(1).forEach(line => {
-        const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-        if (cols.length !== 6) throw new Error('Número de colunas inválido');
-        const horario   = cols[0];
-        const conteudos = cols.slice(1);
-
-        Array.from(tbody.rows).forEach(tr => {
-          if (tr.cells[0].textContent === horario) {
-            conteudos.forEach((txt, i) => {
-              const cell = tr.cells[1 + i];
-              if (cell) {
-                cell.innerHTML = ''; // Limpa conteúdo anterior
-                if (txt.trim()) createBlock(txt.trim(), cell);
-              }
-            });
-          }
-        });
-      });
-    }
-
-    function createBlock(text, cell, color = null) {
-      const blk = document.createElement('div');
-      blk.className   = 'block';
-      blk.draggable   = true;
-      blk.textContent = text;
-      blk.title       = text;
-      if (color) blk.style.background = color;
-      blk.id          = 'b' + Math.random().toString(36).slice(2);
-
-      blk.addEventListener('dragstart', e =>
-        e.dataTransfer.setData('text/plain', blk.id)
-      );
-
-      if (text === 'Inativo') {
-        blk.addEventListener('contextmenu', e => {
-          e.preventDefault();
-          if (confirm('Remover professor?')) {
-            blk.remove();
-            checkConflicts();
-          }
-        });
-      }
-
-      cell.appendChild(blk);
-    }
-
-    function makeDraggable() {
-      Array.from(tbody.querySelectorAll('td')).forEach(td => {
-        td.addEventListener('dragover', e => e.preventDefault());
-        td.addEventListener('drop', e => {
-          e.preventDefault();
-          const id  = e.dataTransfer.getData('text/plain');
-          const blk = document.getElementById(id);
-          if (blk) {
-            td.appendChild(blk);
-            checkConflicts();
-          }
-        });
-      });
-    }
-
-    function checkConflicts() {
-      tbody.querySelectorAll('td').forEach(td => {
-        const blks = td.querySelectorAll('.block');
-        const ativos = Array.from(blks).filter(b => b.textContent !== 'Inativo');
-        ativos.forEach(b => b.classList.toggle('conflict', ativos.length > 1));
-      });
-    }
-
-    function hasConflicts() {
-      return Array.from(tbody.querySelectorAll('td'))
-        .some(td => {
-          const ativos = Array.from(td.querySelectorAll('.block'))
-            .filter(b => b.textContent !== 'Inativo');
-          return ativos.length > 1;
-        });
-    }
-
-    btnCheck.addEventListener('click', () => {
-      checkConflicts();
-      alert(hasConflicts()
-        ? 'Há conflito nos horários!'
-        : 'Não há conflito nos horários!');
-    });
-
-    btnAddEvento.addEventListener('click', () => {
-      if (!selectedCell) return alert('Selecione uma célula primeiro');
-      const nome = prompt('Digite o nome do evento:');
-      if (nome && nome.trim()) {
-        createBlock(nome.trim(), selectedCell);
-        checkConflicts();
-      }
-    });
-
-    btnInativo.addEventListener('click', () => {
-      if (!selectedCell) return alert('Selecione uma célula primeiro');
-      createBlock('Inativo', selectedCell, '#6c757d');
-      checkConflicts();
-    });
-
-    initTable();
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
